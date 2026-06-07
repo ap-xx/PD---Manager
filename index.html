@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PD Manager — Estoque Project Delta</title>
-  <link rel="icon" href="icons/Equipment/Compass.webp" type="image/webp">
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="icon" href="/icons/project delta.png" type="image/png">
+  <link rel="stylesheet" href="/src/style.css">
 </head>
 <body>
   <header class="topbar">
     <div class="brand">
-      <img src="icons/Equipment/Compass.webp" alt="" class="brand-icon">
+      <img src="/icons/project delta.png" alt="Project Delta" class="brand-icon">
       <div>
         <h1>PD Manager</h1>
         <p>Gerenciador de estoque — Project Delta</p>
@@ -120,18 +120,17 @@
 
         <div class="field">
           <span>Item</span>
-          <div class="item-picker" id="item-picker">
-            <input type="text" id="item-search" placeholder="Digite para buscar um item..." autocomplete="off">
-            <div class="item-picker-results" id="item-picker-results" hidden></div>
-            <div class="item-picker-selected" id="item-picker-selected" hidden>
+          <button type="button" class="item-trigger" id="item-trigger">
+            <span class="item-trigger-placeholder" id="item-trigger-placeholder">Clique para escolher um item...</span>
+            <span class="item-trigger-selected" id="item-trigger-selected" hidden>
               <img id="selected-item-icon" src="" alt="">
-              <div>
+              <span class="meta">
                 <strong id="selected-item-name"></strong>
                 <span id="selected-item-path" class="muted"></span>
-              </div>
-              <button type="button" class="btn btn-secondary btn-small" id="change-item-btn">Trocar</button>
-            </div>
-          </div>
+              </span>
+            </span>
+            <span class="item-trigger-chevron">▾</span>
+          </button>
           <input type="hidden" id="selected-item-id" required>
         </div>
 
@@ -148,14 +147,14 @@
             <input type="number" id="quantity-input" min="0" step="1" placeholder="0" required>
           </label>
           <label class="field">
-            <span>Preço unitário</span>
-            <input type="number" id="price-input" min="0" step="0.01" placeholder="0.00" required>
+            <span>Preço unitário (₽)</span>
+            <input type="number" id="price-input" min="0" step="1" placeholder="0" required>
           </label>
         </div>
 
         <div class="field-row total-preview">
           <span>Total deste item:</span>
-          <strong id="total-preview-value">0</strong>
+          <strong id="total-preview-value">0 ₽</strong>
         </div>
 
         <div class="modal-actions">
@@ -166,7 +165,20 @@
     </div>
   </div>
 
-  <script src="js/items.js"></script>
-  <script src="js/app.js"></script>
+  <!-- Item picker overlay (separate from the form modal so it can be larger) -->
+  <div class="modal-overlay picker-overlay" id="picker-overlay" hidden>
+    <div class="modal picker-modal" role="dialog" aria-modal="true" aria-labelledby="picker-title">
+      <div class="modal-header">
+        <h2 id="picker-title">Escolher item</h2>
+        <button class="icon-btn" id="picker-close-btn" type="button" aria-label="Fechar">&times;</button>
+      </div>
+      <div class="picker-search">
+        <input type="text" id="picker-search-input" placeholder="Buscar por nome, categoria, grupo..." autocomplete="off">
+      </div>
+      <div class="picker-results" id="picker-results"></div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.ts"></script>
 </body>
 </html>
