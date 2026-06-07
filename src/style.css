@@ -226,17 +226,14 @@ select:disabled {
 }
 
 /* Styling for the items inside the open dropdown list. Background/color on <option>
-   is honored by Chromium/Edge/Firefox on Windows, giving a dark, on-theme popup. */
+   is honored by Chromium/Edge/Firefox on Windows, giving a dark, on-theme popup.
+   Note: deliberately NOT overriding the highlighted/selected option color — the
+   browser renders that with the OS "Highlight" system color and ignores our CSS for
+   it, so trying to force it purple just produces a clashing blue-and-purple mix. */
 select option {
   background: var(--panel-alt);
   color: var(--text);
   padding: 8px 10px;
-}
-
-select option:checked,
-select option:hover {
-  background: var(--accent);
-  color: #1a1326;
 }
 
 input:focus, select:focus {
@@ -406,22 +403,28 @@ input:focus, select:focus {
   width: 56px;
 }
 
-.col-num {
+/* Target both <th> and <td> with equal specificity so header labels
+   ("Quantidade", "Preço unitário", "Total", "Ações") line up with the
+   right-aligned values/buttons beneath them instead of sitting flush left. */
+.stock-table th.col-num,
+.stock-table td.col-num {
+  text-align: right;
+}
+
+.stock-table td.col-num {
+  font-variant-numeric: tabular-nums;
+}
+
+.stock-table th.col-actions,
+.stock-table td.col-actions {
   text-align: right;
 }
 
 .col-actions {
-  text-align: right;
   width: 150px;
 }
 
-.stock-table td.col-num {
-  text-align: right;
-  font-variant-numeric: tabular-nums;
-}
-
 .stock-table td.col-actions {
-  text-align: right;
   white-space: nowrap;
 }
 
