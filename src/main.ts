@@ -61,8 +61,70 @@ function entryTotal(entry: StockEntry): number {
   return entry.quantity * entry.price;
 }
 
+// ---------- Translations ----------
+// The catalog's category/subcategory/group fields mirror the public/icons/ folder
+// names (in English) so the generator script and item ids stay stable. This map
+// only affects what's *displayed* — filtering still compares the original values.
+
+const LABEL_PT: Record<string, string> = {
+  // Categories
+  Equipment: 'Equipamentos',
+  Loot: 'Saque',
+  Rations: 'Rações',
+  Weapons: 'Armas',
+  Wearables: 'Vestimentas',
+  Geral: 'Geral',
+  // Subcategories
+  Components: 'Componentes',
+  Electronics: 'Eletrônicos',
+  Materials: 'Materiais',
+  Tools: 'Ferramentas',
+  Valuables: 'Valores',
+  Drinks: 'Bebidas',
+  Food: 'Comida',
+  Parts: 'Peças',
+  Primary: 'Primárias',
+  Secondary: 'Secundárias',
+  Throwables: 'Arremessáveis',
+  Backpacks: 'Mochilas',
+  'Chest Rigs': 'Coletes',
+  Gloves: 'Luvas',
+  Helmets: 'Capacetes',
+  'Leg Armor': 'Proteção de pernas',
+  Masks: 'Máscaras',
+  Pants: 'Calças',
+  Shirts: 'Camisas',
+  Visors: 'Viseiras',
+  // Groups (weapon parts)
+  Extras: 'Extras',
+  Front: 'Cano',
+  Handles: 'Punhos',
+  Magazines: 'Carregadores',
+  Muzzle: 'Boca de cano',
+  Optics: 'Ópticas',
+  Stocks: 'Coronhas',
+};
+
+function translateLabel(label: string): string {
+  return LABEL_PT[label] ?? label;
+}
+
+function sortByTranslatedLabel(values: string[]): string[] {
+  return [...values].sort((a, b) => translateLabel(a).localeCompare(translateLabel(b), 'pt-BR'));
+}
+
 function itemBreadcrumb(item: Item): string {
-  return [item.category, item.subcategory, item.group].filter(Boolean).join(' • ');
+  return [item.category, item.subcategory, item.group]
+    .filter((part): part is string => Boolean(part))
+    .map(translateLabel)
+    .join(' • ');
+}
+
+/** Search haystack: name + breadcrumb in pt-BR + the original English category path,
+ * so a search for either "Armas" or "Weapons" finds the same items. */
+function itemSearchText(item: Item): string {
+  const original = [item.category, item.subcategory, item.group].filter(Boolean).join(' ');
+  return `${item.name} ${itemBreadcrumb(item)} ${original}`.toLowerCase();
 }
 
 // ---------- DOM refs ----------
@@ -125,9 +187,9 @@ function populateStaticOptions(): void {
     els.accountSelect.appendChild(new Option(account, account));
   }
 
-  const categories = [...new Set(ITEM_CATALOG.map((item) => item.category))].sort();
+  const categories = sortByTranslatedLabel([...new Set(ITEM_CATALOG.map((item) => item.category))]);
   for (const category of categories) {
-    els.categoryFilter.appendChild(new Option(category, category));
+    els.categoryFilter.appendChild(new Option(translateLabel(category), category));
   }
 }
 
@@ -138,14 +200,14 @@ function refreshSubcategoryOptions(): void {
   els.subcategoryFilter.innerHTML = '';
   els.subcategoryFilter.appendChild(new Option('Todas as subcategorias', ''));
 
-  const subcats = [...new Set(
+  const subcats = sortByTranslatedLabel([...new Set(
     ITEM_CATALOG
       .filter((item) => (!selectedCategory || item.category === selectedCategory) && item.subcategory)
       .map((item) => item.subcategory as string)
-  )].sort();
+  )]);
 
   for (const sub of subcats) {
-    els.subcategoryFilter.appendChild(new Option(sub, sub));
+    els.subcategoryFilter.appendChild(new Option(translateLabel(sub), sub));
   }
 
   els.subcategoryFilter.disabled = subcats.length === 0;
@@ -162,16 +224,16 @@ function refreshGroupOptions(): void {
   els.groupFilter.innerHTML = '';
   els.groupFilter.appendChild(new Option('Todos os grupos', ''));
 
-  const groups = [...new Set(
+  const groups = sortByTranslatedLabel([...new Set(
     ITEM_CATALOG
       .filter((item) => (!selectedCategory || item.category === selectedCategory)
         && (!selectedSubcategory || item.subcategory === selectedSubcategory)
         && item.group)
       .map((item) => item.group as string)
-  )].sort();
+  )]);
 
   for (const group of groups) {
-    els.groupFilter.appendChild(new Option(group, group));
+    els.groupFilter.appendChild(new Option(translateLabel(group), group));
   }
 
   els.groupFilter.disabled = groups.length === 0;
@@ -197,7 +259,7 @@ function getFilteredEntries(): StockEntry[] {
     if (subcategory && item.subcategory !== subcategory) return false;
     if (group && item.group !== group) return false;
     if (query) {
-      const haystack = `${item.name} ${itemBreadcrumb(item)} ${entry.account}`.toLowerCase();
+      const haystack = `${itemSearchText(item)} ${entry.account}`.toLowerCase();
       if (!haystack.includes(query)) return false;
     }
     return true;
@@ -514,7 +576,7 @@ function closePicker(): void {
 function renderPickerResults(query: string): void {
   const trimmed = query.trim().toLowerCase();
   const items = trimmed
-    ? ITEM_CATALOG.filter((item) => `${item.name} ${itemBreadcrumb(item)}`.toLowerCase().includes(trimmed))
+    ? ITEM_CATALOG.filter((item) => itemSearchText(item).includes(trimmed))
     : ITEM_CATALOG;
 
   els.pickerResults.innerHTML = '';

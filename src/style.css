@@ -13,6 +13,9 @@
   --danger-strong: #f494b0;
   --radius: 8px;
   --shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  /* Tells the browser to render native controls (select dropdowns, scrollbars,
+     checkboxes...) using their dark variants instead of the default light ones. */
+  color-scheme: dark;
 }
 
 * {
@@ -178,8 +181,7 @@ input, select, button {
 
 input[type="search"],
 input[type="text"],
-input[type="number"],
-select {
+input[type="number"] {
   width: 100%;
   background: var(--bg-alt);
   border: 1px solid var(--border);
@@ -188,6 +190,53 @@ select {
   color: var(--text);
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/* Custom <select> styling: hide the native arrow and draw our own chevron so the
+   closed control matches the rest of the (purple, dark) UI consistently across
+   browsers. The open dropdown list itself is rendered by the OS/browser — we can't
+   fully restyle it, but `color-scheme: dark` (set on :root) plus the `option` rule
+   below make it use a dark palette instead of the jarring default white popup. */
+select {
+  width: 100%;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-color: var(--bg-alt);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%23b46fe6' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 9px 36px 9px 10px;
+  color: var(--text);
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+select:hover {
+  border-color: var(--accent);
+}
+
+select:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* Styling for the items inside the open dropdown list. Background/color on <option>
+   is honored by Chromium/Edge/Firefox on Windows, giving a dark, on-theme popup. */
+select option {
+  background: var(--panel-alt);
+  color: var(--text);
+  padding: 8px 10px;
+}
+
+select option:checked,
+select option:hover {
+  background: var(--accent);
+  color: #1a1326;
 }
 
 input:focus, select:focus {
