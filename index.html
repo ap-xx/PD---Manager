@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PD Manager — Estoque Project Delta</title>
+  <link rel="icon" href="icons/Equipment/Compass.webp" type="image/webp">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img src="icons/Equipment/Compass.webp" alt="" class="brand-icon">
+      <div>
+        <h1>PD Manager</h1>
+        <p>Gerenciador de estoque — Project Delta</p>
+      </div>
+    </div>
+    <div class="summary-cards" id="summary-cards"></div>
+  </header>
+
+  <main class="layout">
+    <aside class="sidebar">
+      <h2>Filtros</h2>
+
+      <label class="field">
+        <span>Buscar item</span>
+        <input type="search" id="search-input" placeholder="Ex: M4A1, Backpack, Gold...">
+      </label>
+
+      <label class="field">
+        <span>Conta</span>
+        <select id="account-filter">
+          <option value="">Todas as contas</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Categoria</span>
+        <select id="category-filter">
+          <option value="">Todas as categorias</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Subcategoria</span>
+        <select id="subcategory-filter">
+          <option value="">Todas as subcategorias</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span>Grupo</span>
+        <select id="group-filter">
+          <option value="">Todos os grupos</option>
+        </select>
+      </label>
+
+      <button class="btn btn-secondary" id="clear-filters-btn" type="button">Limpar filtros</button>
+
+      <hr>
+
+      <button class="btn btn-primary" id="add-item-btn" type="button">+ Adicionar item ao estoque</button>
+
+      <hr>
+
+      <div class="account-totals">
+        <h2>Totais por conta</h2>
+        <ul id="account-totals-list"></ul>
+      </div>
+
+      <hr>
+
+      <div class="data-tools">
+        <h2>Dados</h2>
+        <button class="btn btn-secondary" id="export-btn" type="button">Exportar (.json)</button>
+        <label class="btn btn-secondary file-btn">
+          Importar (.json)
+          <input type="file" id="import-input" accept="application/json" hidden>
+        </label>
+      </div>
+    </aside>
+
+    <section class="content">
+      <div class="content-header">
+        <h2>Estoque <span id="result-count" class="muted"></span></h2>
+      </div>
+      <div id="empty-state" class="empty-state" hidden>
+        <p>Nenhum item no estoque ainda.</p>
+        <p class="muted">Clique em "Adicionar item ao estoque" para começar.</p>
+      </div>
+      <div class="table-wrapper">
+        <table class="stock-table">
+          <thead>
+            <tr>
+              <th class="col-icon"></th>
+              <th>Item</th>
+              <th>Conta</th>
+              <th class="col-num">Quantidade</th>
+              <th class="col-num">Preço unitário</th>
+              <th class="col-num">Total</th>
+              <th class="col-actions">Ações</th>
+            </tr>
+          </thead>
+          <tbody id="stock-table-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <!-- Add / Edit modal -->
+  <div class="modal-overlay" id="modal-overlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <h2 id="modal-title">Adicionar item ao estoque</h2>
+        <button class="icon-btn" id="modal-close-btn" type="button" aria-label="Fechar">&times;</button>
+      </div>
+      <form id="stock-form">
+        <input type="hidden" id="entry-id">
+
+        <div class="field">
+          <span>Item</span>
+          <div class="item-picker" id="item-picker">
+            <input type="text" id="item-search" placeholder="Digite para buscar um item..." autocomplete="off">
+            <div class="item-picker-results" id="item-picker-results" hidden></div>
+            <div class="item-picker-selected" id="item-picker-selected" hidden>
+              <img id="selected-item-icon" src="" alt="">
+              <div>
+                <strong id="selected-item-name"></strong>
+                <span id="selected-item-path" class="muted"></span>
+              </div>
+              <button type="button" class="btn btn-secondary btn-small" id="change-item-btn">Trocar</button>
+            </div>
+          </div>
+          <input type="hidden" id="selected-item-id" required>
+        </div>
+
+        <div class="field">
+          <span>Conta</span>
+          <select id="account-select" required>
+            <option value="" disabled selected>Selecione a conta</option>
+          </select>
+        </div>
+
+        <div class="field-row">
+          <label class="field">
+            <span>Quantidade</span>
+            <input type="number" id="quantity-input" min="0" step="1" placeholder="0" required>
+          </label>
+          <label class="field">
+            <span>Preço unitário</span>
+            <input type="number" id="price-input" min="0" step="0.01" placeholder="0.00" required>
+          </label>
+        </div>
+
+        <div class="field-row total-preview">
+          <span>Total deste item:</span>
+          <strong id="total-preview-value">0</strong>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn btn-secondary" id="cancel-btn">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="save-btn">Salvar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/items.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
