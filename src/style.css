@@ -256,6 +256,14 @@ input:focus, select:focus {
   text-align: center;
 }
 
+/* .btn sets its own `display`, which (per CSS cascade rules) outranks the
+   user-agent stylesheet's `[hidden] { display: none }` at equal specificity —
+   so a hidden .btn would otherwise stay visible. Reinstate the hide explicitly
+   (needed for #dialog-cancel-btn, toggled in alert-style dialogs). */
+.btn[hidden] {
+  display: none;
+}
+
 .btn-primary {
   background: linear-gradient(135deg, var(--accent), #8c4fc7);
   border-color: var(--accent);
@@ -552,6 +560,29 @@ input:focus, select:focus {
   border-radius: 6px;
   padding: 10px 14px;
   margin-top: 4px;
+}
+
+/* Generic confirm/alert dialog — replaces window.confirm()/window.alert() so
+   prompts share the same panel/border/button language as the rest of the app
+   instead of the browser's plain "localhost:5500 diz" chrome popups. */
+.dialog-overlay {
+  z-index: 80;
+}
+
+.dialog-modal {
+  max-width: 420px;
+  padding: 22px 22px 20px;
+}
+
+.dialog-message {
+  margin: 0;
+  color: var(--text);
+  line-height: 1.55;
+  white-space: pre-line;
+}
+
+.dialog-modal .modal-actions {
+  margin-top: 20px;
 }
 
 .total-preview strong {

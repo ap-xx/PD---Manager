@@ -115,7 +115,7 @@
         <h2 id="modal-title">Adicionar item ao estoque</h2>
         <button class="icon-btn" id="modal-close-btn" type="button" aria-label="Fechar">&times;</button>
       </div>
-      <form id="stock-form">
+      <form id="stock-form" novalidate>
         <input type="hidden" id="entry-id">
 
         <div class="field">
@@ -176,6 +176,18 @@
         <input type="text" id="picker-search-input" placeholder="Buscar por nome, categoria, grupo..." autocomplete="off">
       </div>
       <div class="picker-results" id="picker-results"></div>
+    </div>
+  </div>
+
+  <!-- Generic confirm/alert dialog: replaces window.confirm()/window.alert(),
+       which render as plain browser-chrome popups ("localhost:5500 diz..."). -->
+  <div class="modal-overlay dialog-overlay" id="dialog-overlay" hidden>
+    <div class="modal dialog-modal" role="alertdialog" aria-modal="true" aria-describedby="dialog-message">
+      <p id="dialog-message" class="dialog-message"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" id="dialog-cancel-btn">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="dialog-confirm-btn">OK</button>
+      </div>
     </div>
   </div>
 

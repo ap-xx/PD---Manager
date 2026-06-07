@@ -175,9 +175,90 @@ const els = {
   pickerSearchInput: byId<HTMLInputElement>('picker-search-input'),
   pickerResults: byId<HTMLDivElement>('picker-results'),
   pickerCloseBtn: byId<HTMLButtonElement>('picker-close-btn'),
+
+  dialogOverlay: byId<HTMLDivElement>('dialog-overlay'),
+  dialogMessage: byId<HTMLParagraphElement>('dialog-message'),
+  dialogConfirmBtn: byId<HTMLButtonElement>('dialog-confirm-btn'),
+  dialogCancelBtn: byId<HTMLButtonElement>('dialog-cancel-btn'),
 };
 
 let selectedItemId: string | null = null;
+
+// ---------- Overlay scroll lock ----------
+// Several overlays (form modal, item picker, confirm/alert dialog) can be
+// stacked — e.g. a validation alert while the form modal is open — so we only
+// release the body scroll lock once none of them remain visible.
+
+function isAnyOverlayOpen(): boolean {
+  return !els.modalOverlay.hidden || !els.pickerOverlay.hidden || !els.dialogOverlay.hidden;
+}
+
+function syncBodyScrollLock(): void {
+  document.body.style.overflow = isAnyOverlayOpen() ? 'hidden' : '';
+}
+
+// ---------- Custom dialogs ----------
+// Replaces window.confirm()/window.alert() — which render as plain
+// browser-chrome popups ("localhost:5500 diz...") that clash with the themed
+// UI — with an on-theme modal sharing the same panel/button language.
+
+interface DialogOptions {
+  confirmLabel?: string;
+  /** Pass null to render an alert-style dialog with a single acknowledge button. */
+  cancelLabel?: string | null;
+  danger?: boolean;
+}
+
+function showDialog(message: string, options: DialogOptions = {}): Promise<boolean> {
+  const { confirmLabel = 'OK', cancelLabel = 'Cancelar', danger = false } = options;
+
+  return new Promise<boolean>((resolve) => {
+    els.dialogMessage.textContent = message;
+    els.dialogConfirmBtn.textContent = confirmLabel;
+    els.dialogConfirmBtn.className = `btn ${danger ? 'btn-danger' : 'btn-primary'}`;
+
+    const showCancel = cancelLabel !== null;
+    els.dialogCancelBtn.hidden = !showCancel;
+    if (showCancel) els.dialogCancelBtn.textContent = cancelLabel;
+
+    const finish = (result: boolean) => {
+      els.dialogOverlay.hidden = true;
+      syncBodyScrollLock();
+      els.dialogConfirmBtn.removeEventListener('click', onConfirm);
+      els.dialogCancelBtn.removeEventListener('click', onCancel);
+      els.dialogOverlay.removeEventListener('mousedown', onBackdrop);
+      document.removeEventListener('keydown', onKeydown);
+      resolve(result);
+    };
+    const onConfirm = () => finish(true);
+    const onCancel = () => finish(false);
+    const onBackdrop = (event: MouseEvent) => {
+      if (event.target === els.dialogOverlay) finish(false);
+    };
+    const onKeydown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') finish(false);
+    };
+
+    els.dialogConfirmBtn.addEventListener('click', onConfirm);
+    els.dialogCancelBtn.addEventListener('click', onCancel);
+    els.dialogOverlay.addEventListener('mousedown', onBackdrop);
+    document.addEventListener('keydown', onKeydown);
+
+    els.dialogOverlay.hidden = false;
+    syncBodyScrollLock();
+    window.setTimeout(() => els.dialogConfirmBtn.focus(), 0);
+  });
+}
+
+/** Styled stand-in for window.confirm() — resolves true/false instead of blocking. */
+function confirmDialog(message: string, options: DialogOptions = {}): Promise<boolean> {
+  return showDialog(message, options);
+}
+
+/** Styled stand-in for window.alert() — resolves once the user acknowledges. */
+function alertDialog(message: string, options: Pick<DialogOptions, 'confirmLabel'> = {}): Promise<void> {
+  return showDialog(message, { ...options, cancelLabel: null }).then(() => undefined);
+}
 
 // ---------- Filter option setup ----------
 
@@ -428,12 +509,16 @@ function buildRow(entry: StockEntry): HTMLTableRowElement {
   return tr;
 }
 
-function deleteEntry(id: string): void {
+async function deleteEntry(id: string): Promise<void> {
   const entry = stock.find((e) => e.id === id);
   if (!entry) return;
   const item = itemsById.get(entry.itemId);
   const label = item ? `${item.name} (${entry.account})` : entry.account;
-  if (!window.confirm(`Remover "${label}" do estoque?`)) return;
+  const confirmed = await confirmDialog(`Remover "${label}" do estoque?`, {
+    confirmLabel: 'Remover',
+    danger: true,
+  });
+  if (!confirmed) return;
   stock = stock.filter((e) => e.id !== id);
   saveStock();
   render();
@@ -462,14 +547,12 @@ function openModal(entry: StockEntry | null): void {
 
   updateTotalPreview();
   els.modalOverlay.hidden = false;
-  document.body.style.overflow = 'hidden';
+  syncBodyScrollLock();
 }
 
 function closeModal(): void {
   els.modalOverlay.hidden = true;
-  if (els.pickerOverlay.hidden) {
-    document.body.style.overflow = '';
-  }
+  syncBodyScrollLock();
 }
 
 function clearSelectedItem(): void {
@@ -498,7 +581,7 @@ function updateTotalPreview(): void {
   els.totalPreviewValue.textContent = formatRubles(quantity * price);
 }
 
-function handleFormSubmit(event: SubmitEvent): void {
+async function handleFormSubmit(event: SubmitEvent): Promise<void> {
   event.preventDefault();
 
   const itemId = els.selectedItemIdInput.value;
@@ -507,19 +590,19 @@ function handleFormSubmit(event: SubmitEvent): void {
   const price = Math.round(Number(els.priceInput.value));
 
   if (!itemId || !itemsById.has(itemId)) {
-    window.alert('Selecione um item válido.');
+    await alertDialog('Selecione um item válido.');
     return;
   }
   if (!account) {
-    window.alert('Selecione a conta.');
+    await alertDialog('Selecione a conta.');
     return;
   }
   if (!Number.isFinite(quantity) || quantity < 0) {
-    window.alert('Informe uma quantidade válida.');
+    await alertDialog('Informe uma quantidade válida.');
     return;
   }
   if (!Number.isFinite(price) || price < 0) {
-    window.alert('Informe um preço válido (Rubles são valores inteiros).');
+    await alertDialog('Informe um preço válido (Rubles são valores inteiros).');
     return;
   }
 
@@ -562,15 +645,13 @@ function openPicker(): void {
   els.pickerSearchInput.value = '';
   renderPickerResults('');
   els.pickerOverlay.hidden = false;
-  document.body.style.overflow = 'hidden';
+  syncBodyScrollLock();
   window.setTimeout(() => els.pickerSearchInput.focus(), 0);
 }
 
 function closePicker(): void {
   els.pickerOverlay.hidden = true;
-  if (els.modalOverlay.hidden) {
-    document.body.style.overflow = '';
-  }
+  syncBodyScrollLock();
 }
 
 function renderPickerResults(query: string): void {
@@ -653,43 +734,41 @@ function exportData(): void {
   URL.revokeObjectURL(url);
 }
 
-function importData(file: File): void {
-  const reader = new FileReader();
-  reader.onload = () => {
-    try {
-      const parsed = JSON.parse(String(reader.result));
-      const incoming = Array.isArray(parsed) ? parsed : parsed.stock;
-      if (!Array.isArray(incoming)) throw new Error('Formato inválido.');
+async function importData(file: File): Promise<void> {
+  try {
+    const text = await file.text();
+    const parsed = JSON.parse(text);
+    const incoming = Array.isArray(parsed) ? parsed : parsed.stock;
+    if (!Array.isArray(incoming)) throw new Error('Formato inválido.');
 
-      const validEntries = incoming.filter(isValidEntry);
-      if (validEntries.length === 0) {
-        window.alert('Nenhum item válido encontrado no arquivo.');
-        return;
-      }
-
-      const replace = window.confirm(
-        `Encontrados ${validEntries.length} itens válidos.\n\n`
-        + 'Clique OK para SUBSTITUIR o estoque atual, ou Cancelar para ADICIONAR aos itens existentes.'
-      );
-
-      if (replace) {
-        stock = validEntries.map((entry) => ({ ...entry }));
-      } else {
-        const existingIds = new Set(stock.map((e) => e.id));
-        for (const entry of validEntries) {
-          stock.push(existingIds.has(entry.id) ? { ...entry, id: makeId() } : { ...entry });
-        }
-      }
-
-      saveStock();
-      render();
-      window.alert('Importação concluída.');
-    } catch (err) {
-      console.error(err);
-      window.alert('Não foi possível importar o arquivo. Verifique se é um JSON exportado pelo PD Manager.');
+    const validEntries = incoming.filter(isValidEntry);
+    if (validEntries.length === 0) {
+      await alertDialog('Nenhum item válido encontrado no arquivo.');
+      return;
     }
-  };
-  reader.readAsText(file);
+
+    const itemWord = validEntries.length === 1 ? 'item válido' : 'itens válidos';
+    const replace = await confirmDialog(
+      `Encontrados ${validEntries.length} ${itemWord} no arquivo.\n\nComo deseja prosseguir?`,
+      { confirmLabel: 'Substituir estoque atual', cancelLabel: 'Adicionar aos existentes' }
+    );
+
+    if (replace) {
+      stock = validEntries.map((entry) => ({ ...entry }));
+    } else {
+      const existingIds = new Set(stock.map((e) => e.id));
+      for (const entry of validEntries) {
+        stock.push(existingIds.has(entry.id) ? { ...entry, id: makeId() } : { ...entry });
+      }
+    }
+
+    saveStock();
+    render();
+    await alertDialog('Importação concluída.');
+  } catch (err) {
+    console.error(err);
+    await alertDialog('Não foi possível importar o arquivo. Verifique se é um JSON exportado pelo PD Manager.');
+  }
 }
 
 // ---------- Wiring ----------
@@ -739,6 +818,7 @@ function attachEvents(): void {
 
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
+    if (!els.dialogOverlay.hidden) return; // the dialog manages its own Escape handling
     if (!els.pickerOverlay.hidden) {
       closePicker();
     } else if (!els.modalOverlay.hidden) {
