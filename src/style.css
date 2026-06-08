@@ -22,6 +22,18 @@
   box-sizing: border-box;
 }
 
+/* Light-purple text selection highlight, matching the theme's accent palette
+   instead of the browser's default blue. */
+::selection {
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+}
+
+::-moz-selection {
+  background: var(--accent-soft);
+  color: var(--accent-strong);
+}
+
 html, body {
   height: 100%;
 }
@@ -430,11 +442,62 @@ input:focus, select:focus {
 }
 
 .col-select input[type="checkbox"],
-.row-checkbox {
-  width: 16px;
-  height: 16px;
-  accent-color: var(--accent);
+.row-checkbox,
+.checkbox-field input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--bg-alt);
+  display: inline-grid;
+  place-content: center;
+  outline: none;
   cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+}
+
+.col-select input[type="checkbox"]::after,
+.row-checkbox::after,
+.checkbox-field input[type="checkbox"]::after {
+  content: '';
+  width: 9px;
+  height: 9px;
+  clip-path: polygon(15% 45%, 0% 64%, 50% 100%, 100% 18%, 80% 4%, 44% 60%);
+  background: var(--bg);
+  transform: scale(0);
+  transition: transform 0.1s ease-in-out;
+}
+
+.col-select input[type="checkbox"]:hover,
+.row-checkbox:hover,
+.checkbox-field input[type="checkbox"]:hover {
+  border-color: var(--accent);
+}
+
+.col-select input[type="checkbox"]:checked,
+.row-checkbox:checked,
+.checkbox-field input[type="checkbox"]:checked {
+  background: linear-gradient(135deg, var(--accent-strong), var(--accent));
+  border-color: var(--accent);
+}
+
+.col-select input[type="checkbox"]:checked::after,
+.row-checkbox:checked::after,
+.checkbox-field input[type="checkbox"]:checked::after {
+  transform: scale(1);
+}
+
+.col-select input[type="checkbox"]:focus-visible,
+.row-checkbox:focus-visible,
+.checkbox-field input[type="checkbox"]:focus-visible {
+  border-color: var(--accent);
+  /* Purple focus glow instead of the browser's default blue focus ring. */
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .stock-table tbody tr.selected {
@@ -889,14 +952,6 @@ input:focus, select:focus {
   margin-bottom: 12px;
   font-size: 0.88rem;
   color: var(--text);
-  cursor: pointer;
-}
-
-.checkbox-field input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0;
-  accent-color: var(--accent);
   cursor: pointer;
 }
 

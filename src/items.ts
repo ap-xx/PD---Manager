@@ -268,6 +268,14 @@ export const ITEM_CATALOG: Item[] = [
     "icon": "icons/Loot/Tools/Ph2_screwdriver.webp"
   },
   {
+    "id": "Loot/Tools/RepairKit",
+    "category": "Loot",
+    "subcategory": "Tools",
+    "group": null,
+    "name": "RepairKit",
+    "icon": "icons/Loot/Tools/RepairKit.webp"
+  },
+  {
     "id": "Loot/Tools/Wrench",
     "category": "Loot",
     "subcategory": "Tools",
