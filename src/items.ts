@@ -44,20 +44,20 @@ export const ITEM_CATALOG: Item[] = [
     "icon": "icons/Equipment/Map_NEW.webp"
   },
   {
-    "id": "Heals/Medical/AA-2_MedKit_29",
+    "id": "Heals/Medical/AI-2",
     "category": "Heals",
     "subcategory": "Medical",
     "group": null,
-    "name": "AA-2 MedKit 29",
-    "icon": "icons/Heals/Medical/AA-2_MedKit_29.webp"
+    "name": "AI-2",
+    "icon": "icons/Heals/Medical/AI-2.webp"
   },
   {
-    "id": "Heals/Medical/AI-4_cropped",
+    "id": "Heals/Medical/AI-4",
     "category": "Heals",
     "subcategory": "Medical",
     "group": null,
-    "name": "AI-4 cropped",
-    "icon": "icons/Heals/Medical/AI-4_cropped.webp"
+    "name": "AI-4",
+    "icon": "icons/Heals/Medical/AI-4.webp"
   },
   {
     "id": "Heals/Medical/Bandage",
@@ -68,20 +68,20 @@ export const ITEM_CATALOG: Item[] = [
     "icon": "icons/Heals/Medical/Bandage.webp"
   },
   {
+    "id": "Heals/Medical/Dressing",
+    "category": "Heals",
+    "subcategory": "Medical",
+    "group": null,
+    "name": "Dressing",
+    "icon": "icons/Heals/Medical/Dressing.webp"
+  },
+  {
     "id": "Heals/Medical/IFAK",
     "category": "Heals",
     "subcategory": "Medical",
     "group": null,
     "name": "IFAK",
     "icon": "icons/Heals/Medical/IFAK.webp"
-  },
-  {
-    "id": "Heals/Medical/Individual_Medkit-2",
-    "category": "Heals",
-    "subcategory": "Medical",
-    "group": null,
-    "name": "Individual Medkit-2",
-    "icon": "icons/Heals/Medical/Individual_Medkit-2.webp"
   },
   {
     "id": "Heals/Medical/Rag",
@@ -92,12 +92,12 @@ export const ITEM_CATALOG: Item[] = [
     "icon": "icons/Heals/Medical/Rag.webp"
   },
   {
-    "id": "Heals/Medical/Wound_Dressing_2",
+    "id": "Heals/Medical/Survival",
     "category": "Heals",
     "subcategory": "Medical",
     "group": null,
-    "name": "Wound Dressing 2",
-    "icon": "icons/Heals/Medical/Wound_Dressing_2.webp"
+    "name": "Survival",
+    "icon": "icons/Heals/Medical/Survival.webp"
   },
   {
     "id": "Heals/Stims/Green_serum",
