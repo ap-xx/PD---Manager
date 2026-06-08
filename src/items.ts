@@ -108,20 +108,20 @@ export const ITEM_CATALOG: Item[] = [
     "icon": "icons/Heals/Stims/Green_serum.webp"
   },
   {
+    "id": "Heals/Stims/Purple_Serum",
+    "category": "Heals",
+    "subcategory": "Stims",
+    "group": null,
+    "name": "Purple Serum",
+    "icon": "icons/Heals/Stims/Purple_Serum.webp"
+  },
+  {
     "id": "Heals/Stims/Red_serum",
     "category": "Heals",
     "subcategory": "Stims",
     "group": null,
     "name": "Red serum",
     "icon": "icons/Heals/Stims/Red_serum.webp"
-  },
-  {
-    "id": "Heals/Stims/Serum-x_P",
-    "category": "Heals",
-    "subcategory": "Stims",
-    "group": null,
-    "name": "Serum-x P",
-    "icon": "icons/Heals/Stims/Serum-x_P.webp"
   },
   {
     "id": "Heals/Stims/Yellow_serum",
