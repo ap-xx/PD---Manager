@@ -56,11 +56,32 @@
         </select>
       </label>
 
+      <label class="checkbox-field">
+        <input type="checkbox" id="favorites-filter">
+        <span>★ Somente favoritos</span>
+      </label>
+
+      <label class="checkbox-field">
+        <input type="checkbox" id="low-stock-filter">
+        <span>Somente estoque baixo</span>
+      </label>
+
       <button class="btn btn-secondary" id="clear-filters-btn" type="button">Limpar filtros</button>
 
       <hr>
 
       <button class="btn btn-primary" id="add-item-btn" type="button">+ Adicionar item ao estoque</button>
+      <button class="btn btn-secondary" id="stats-btn" type="button">📊 Ver estatísticas</button>
+
+      <hr>
+
+      <div class="settings-block">
+        <h2>Estoque baixo</h2>
+        <label class="field">
+          <span>Avisar quando a quantidade for menor que</span>
+          <input type="number" id="low-stock-threshold-input" min="0" step="1">
+        </label>
+      </div>
 
       <hr>
 
@@ -85,6 +106,17 @@
       <div class="content-header">
         <h2>Estoque <span id="result-count" class="muted"></span></h2>
       </div>
+      <div class="bulk-bar" id="bulk-bar" hidden>
+        <span id="bulk-count" class="bulk-count"></span>
+        <div class="bulk-actions">
+          <select id="bulk-account-select">
+            <option value="">Mover para conta...</option>
+          </select>
+          <button class="btn btn-secondary btn-small" id="bulk-move-btn" type="button">Mover</button>
+          <button class="btn btn-danger btn-small" id="bulk-delete-btn" type="button">Remover selecionados</button>
+          <button class="btn btn-secondary btn-small" id="bulk-clear-btn" type="button">Limpar seleção</button>
+        </div>
+      </div>
       <div id="empty-state" class="empty-state" hidden>
         <p>Nenhum item no estoque ainda.</p>
         <p class="muted">Clique em "Adicionar item ao estoque" para começar.</p>
@@ -93,12 +125,13 @@
         <table class="stock-table">
           <thead>
             <tr>
+              <th class="col-select"><input type="checkbox" id="select-all-checkbox" aria-label="Selecionar todos"></th>
               <th class="col-icon"></th>
-              <th>Item</th>
-              <th>Conta</th>
-              <th class="col-num">Quantidade</th>
-              <th class="col-num">Preço unitário</th>
-              <th class="col-num">Total</th>
+              <th class="sortable" data-sort="name">Item<span class="sort-arrow"></span></th>
+              <th class="sortable" data-sort="account">Conta<span class="sort-arrow"></span></th>
+              <th class="col-num sortable" data-sort="quantity">Quantidade<span class="sort-arrow"></span></th>
+              <th class="col-num sortable" data-sort="price">Preço unitário<span class="sort-arrow"></span></th>
+              <th class="col-num sortable" data-sort="total">Total<span class="sort-arrow"></span></th>
               <th class="col-actions">Ações</th>
             </tr>
           </thead>
@@ -190,6 +223,31 @@
       </div>
     </div>
   </div>
+
+  <!-- Stats / insights panel -->
+  <div class="modal-overlay" id="stats-overlay" hidden>
+    <div class="modal stats-modal" role="dialog" aria-modal="true" aria-labelledby="stats-title">
+      <div class="modal-header">
+        <h2 id="stats-title">📊 Estatísticas</h2>
+        <button class="icon-btn" id="stats-close-btn" type="button" aria-label="Fechar">&times;</button>
+      </div>
+      <div class="stats-body" id="stats-body"></div>
+    </div>
+  </div>
+
+  <!-- Price history popover -->
+  <div class="modal-overlay" id="history-overlay" hidden>
+    <div class="modal history-modal" role="dialog" aria-modal="true" aria-labelledby="history-title">
+      <div class="modal-header">
+        <h2 id="history-title">Histórico de preço</h2>
+        <button class="icon-btn" id="history-close-btn" type="button" aria-label="Fechar">&times;</button>
+      </div>
+      <div class="history-body" id="history-body"></div>
+    </div>
+  </div>
+
+  <!-- Toast notifications: lightweight, non-blocking feedback (e.g. "Item removido — Desfazer") -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
 
   <script type="module" src="/src/main.ts"></script>
 </body>

@@ -11,10 +11,20 @@ export interface Item {
 
 export type Account = 'notakxz' | 'RepairKitMan' | 'megagabriel10';
 
+/** A single snapshot of an entry's unit price, recorded whenever it changes. */
+export interface PricePoint {
+  price: number;
+  /** ISO timestamp of when this price was set. */
+  date: string;
+}
+
 export interface StockEntry {
   id: string;
   itemId: string;
   account: Account;
   quantity: number;
   price: number;
+  /** Chronological log of price changes (oldest first), capped to a small size.
+   *  Optional so entries imported/saved before this feature still load fine. */
+  priceHistory?: PricePoint[];
 }
