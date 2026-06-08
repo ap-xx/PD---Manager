@@ -118,6 +118,7 @@ function entryTotal(entry: StockEntry): number {
 const LABEL_PT: Record<string, string> = {
   // Categories
   Equipment: 'Equipamentos',
+  Heals: 'Cura',
   Loot: 'Saque',
   Rations: 'Rações',
   Weapons: 'Armas',
@@ -127,6 +128,8 @@ const LABEL_PT: Record<string, string> = {
   Components: 'Componentes',
   Electronics: 'Eletrônicos',
   Materials: 'Materiais',
+  Medical: 'Medicamentos',
+  Stims: 'Estimulantes',
   Tools: 'Ferramentas',
   Valuables: 'Valores',
   Drinks: 'Bebidas',

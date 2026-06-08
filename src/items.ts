@@ -44,6 +44,94 @@ export const ITEM_CATALOG: Item[] = [
     "icon": "icons/Equipment/Map_NEW.webp"
   },
   {
+    "id": "Heals/Medical/AA-2_MedKit_29",
+    "category": "Heals",
+    "subcategory": "Medical",
+    "group": null,
+    "name": "AA-2 MedKit 29",
+    "icon": "icons/Heals/Medical/AA-2_MedKit_29.webp"
+  },
+  {
+    "id": "Heals/Medical/AI-4_cropped",
+    "category": "Heals",
+    "subcategory": "Medical",
+    "group": null,
+    "name": "AI-4 cropped",
+    "icon": "icons/Heals/Medical/AI-4_cropped.webp"
+  },
+  {
+    "id": "Heals/Medical/Bandage",
+    "category": "Heals",
+    "subcategory": "Medical",
+    "group": null,
+    "name": "Bandage",
+    "icon": "icons/Heals/Medical/Bandage.webp"
+  },
+  {
+    "id": "Heals/Medical/IFAK",
+    "category": "Heals",
+    "subcategory": "Medical",
+    "group": null,
+    "name": "IFAK",
+    "icon": "icons/Heals/Medical/IFAK.webp"
+  },
+  {
+    "id": "Heals/Medical/Individual_Medkit-2",
+    "category": "Heals",
+    "subcategory": "Medical",
+    "group": null,
+    "name": "Individual Medkit-2",
+    "icon": "icons/Heals/Medical/Individual_Medkit-2.webp"
+  },
+  {
+    "id": "Heals/Medical/Rag",
+    "category": "Heals",
+    "subcategory": "Medical",
+    "group": null,
+    "name": "Rag",
+    "icon": "icons/Heals/Medical/Rag.webp"
+  },
+  {
+    "id": "Heals/Medical/Wound_Dressing_2",
+    "category": "Heals",
+    "subcategory": "Medical",
+    "group": null,
+    "name": "Wound Dressing 2",
+    "icon": "icons/Heals/Medical/Wound_Dressing_2.webp"
+  },
+  {
+    "id": "Heals/Stims/Green_serum",
+    "category": "Heals",
+    "subcategory": "Stims",
+    "group": null,
+    "name": "Green serum",
+    "icon": "icons/Heals/Stims/Green_serum.webp"
+  },
+  {
+    "id": "Heals/Stims/Red_serum",
+    "category": "Heals",
+    "subcategory": "Stims",
+    "group": null,
+    "name": "Red serum",
+    "icon": "icons/Heals/Stims/Red_serum.webp"
+  },
+  {
+    "id": "Heals/Stims/Serum-x_P",
+    "category": "Heals",
+    "subcategory": "Stims",
+    "group": null,
+    "name": "Serum-x P",
+    "icon": "icons/Heals/Stims/Serum-x_P.webp"
+  },
+  {
+    "id": "Heals/Stims/Yellow_serum",
+    "category": "Heals",
+    "subcategory": "Stims",
+    "group": null,
+    "name": "Yellow serum",
+    "icon": "icons/Heals/Stims/Yellow_serum.webp"
+  },
+  {
     "id": "Loot/Components/Fuze",
     "category": "Loot",
     "subcategory": "Components",
@@ -794,6 +882,14 @@ export const ITEM_CATALOG: Item[] = [
     "group": "Optics",
     "name": "T1 Micro Red Dot Sight",
     "icon": "icons/Weapons/Parts/Optics/T1_Micro_Red_Dot_Sight.webp"
+  },
+  {
+    "id": "Weapons/Parts/Optics/T12W",
+    "category": "Weapons",
+    "subcategory": "Parts",
+    "group": "Optics",
+    "name": "T12W",
+    "icon": "icons/Weapons/Parts/Optics/T12W.webp"
   },
   {
     "id": "Weapons/Parts/Stocks/Akmi_stock",
